@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Driver Online – Portofolio Andreas</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- (Opsional) stylesheet geocoder untuk ikon kaca pembesar yang lama -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"/>
+
+  <!-- html -> pdf -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- CSS kita -->
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== Screen 1 ===== -->
+  <section id="screen-welcome" class="screen welcome active">
+    <div class="welcome-card">
+      <div class="brand">
+        <svg viewBox="0 0 24 24">
+          <path d="M4 5a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v10a4 4 0 0 1-4 4h-1l1 2h-4l1-2H9a4 4 0 0 1-4-4V5zm3-1a1 1 0 0 0-1 1v7h12V5a1 1 0 0 0-1-1H7zm11 10H6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2z"/>
+        </svg>
+      </div>
+      <h1>TravelGo Driver</h1>
+      <p>Travel anywhere, anytime—ala portofolio 😄</p>
+      <button id="btnGetStarted" class="btn">Get Started</button>
+      <div class="subtle">No login needed</div>
+    </div>
+  </section>
+
+  <!-- ===== Screen 2 ===== -->
+  <section id="screen-select" class="screen select">
+    <div class="hero">
+      <div class="bar"><span>☰</span><span>⋯</span></div>
+      <h2>Your Transport Solution</h2>
+      <p>From your location to your destination.</p>
+    </div>
+    <div class="card">
+      <input id="sel-from" class="input" placeholder="From (opsional – otomatis GPS nanti)"/>
+      <input id="sel-to" class="input" placeholder="Your Destination (boleh kosong, bisa klik peta nanti)"/>
+    </div>
+    <div class="grid">
+      <div class="mode disabled"><div class="icon">🚌</div>Bus</div>
+      <div class="mode disabled"><div class="icon">🚆</div>Train</div>
+      <div class="mode disabled"><div class="icon">🚗</div>Car</div>
+      <div id="mode-motor" class="mode active"><div class="icon">🏍️</div>Motor</div>
+    </div>
+    <div class="footer">
+      <button id="btnSelectContinue" class="btn-primary">Continue with Motor</button>
+      <button id="btnSelectInfo" class="btn-secondary">Why only Motor?</button>
+    </div>
+  </section>
+
+  <!-- ===== Screen 3 ===== -->
+  <section id="screen-ride" class="screen ride">
+    <div class="ride-head">
+      <div class="ride-title">Your Destination</div>
+      <div class="pill">Travel Time — <span id="pillMins">—</span></div>
+    </div>
+
+    <div id="ride-map"></div>
+
+    <div id="speedBanner" class="speed-banner"></div>
+
+    <div class="ride-card">
+      <div class="row">
+        <input id="ride-from" class="input" placeholder="Klik 📍 untuk ambil GPS (butuh HTTPS/localhost)." disabled>
+        <button id="ride-locate" class="btn-gray" title="Ambil GPS">📍</button>
+      </div>
+      <div class="row">
+        <input id="ride-to" class="input" placeholder="Tujuan (ketik / klik peta)">
+        <button id="ride-search" class="btn-gray" title="Cari alamat">🔎</button>
+        <button id="ride-route" class="btn-blue">RUTE</button>
+      </div>
+
+      <!-- suggestions -->
+      <div id="suggest" class="suggest" style="display:none"></div>
+
+      <!-- alternatif rute -->
+      <div id="routeList" class="route-list" style="display:none"></div>
+
+      <div class="row" style="margin-top:8px">
+        <button id="ride-start" class="btn-blue" disabled>Start Delivery</button>
+        <button id="ride-finish" class="btn-gray" disabled>Finish</button>
+        <button id="ride-reset" class="btn-gray">Reset</button>
+      </div>
+      <div id="ride-summary" class="meta">Pilih tujuan lalu klik RUTE.</div>
+    </div>
+  </section>
+
+  <!-- ===== Modals ===== -->
+  <div id="modalWIP" class="modal-backdrop">
+    <div class="modal">
+      <h3>Fitur masih dalam pembuatan</h3>
+      <p style="margin:6px 0;color:var(--muted)">Untuk demo ini, hanya mode <b>Motor</b> yang aktif.</p>
+      <div class="modal-actions"><button class="btn-blue" id="wip-ok">Oke</button></div>
+    </div>
+  </div>
+
+  <div id="modalFinding" class="modal-backdrop">
+    <div class="modal">
+      <h3>Mencari driver terdekat…</h3>
+      <p style="color:var(--muted)">Mohon tunggu sebentar, lagi ngecek yang on duty ☕</p>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+        <div class="spinner"></div>
+        <span id="findingTick">0</span>/5 detik
+      </div>
+    </div>
+  </div>
+
+  <div id="modalDriver" class="modal-backdrop">
+    <div class="modal">
+      <h3>Driver ditemukan 🎉</h3>
+      <div style="display:flex;gap:12px;align-items:center;margin-top:6px">
+        <div class="ph" id="driverPhoto"></div>
+        <div><div><b id="driverName">Andreas Alessandro</b></div><div style="font-size:13px;color:#6b7280">Honda Beat • BG 5589 RT</div></div>
+      </div>
+      <div class="modal-actions" style="margin-top:12px">
+        <button id="d-cancel" class="btn-gray">Batal</button>
+        <button id="d-continue" class="btn-blue">Lanjutkan</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalCost" class="modal-backdrop">
+    <div class="modal">
+      <h3>Konfirmasi Biaya</h3>
+      <div class="grid">
+        <span>Jarak</span><strong id="c-jarak">– km</strong>
+        <span>Ongkos (Rp10.000/km)</span><strong id="c-ongkos">–</strong>
+        <span>Biaya admin</span><strong id="c-admin">Rp1.000</strong>
+      </div>
+      <div class="hr"></div>
+      <div class="grid"><span class="total">TOTAL</span><span class="total" id="c-total">–</span></div>
+      <div class="modal-actions">
+        <button id="c-cancel" class="btn-gray">Batal</button>
+        <button id="c-ok" class="btn-blue">Mulai</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalFinish" class="modal-backdrop">
+    <div class="modal">
+      <h3>Ringkasan Pengantaran</h3>
+      <div class="grid">
+        <span>Waktu</span><strong id="f-waktu">–</strong>
+        <span>Durasi</span><strong id="f-durasi">– menit</strong>
+        <span>Jarak</span><strong id="f-jarak">– km</strong>
+        <span>Ongkos</span><strong id="f-ongkos">–</strong>
+        <span>Admin</span><strong id="f-admin">Rp1.000</strong>
+      </div>
+      <div class="hr"></div>
+      <div class="grid"><span class="total">TOTAL</span><span class="total" id="f-total">–</span></div>
+      <div class="modal-actions">
+        <button id="f-save" class="btn-gray">💾 Simpan Riwayat</button>
+        <button id="f-html" class="btn-gray">📝 Download HTML</button>
+        <button id="f-pdf" class="btn-blue">📄 Download PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Pengantaran selesai. Terima kasih! 🎉</div>
+
+  <!-- Receipt -->
+  <div id="receipt">
+    <h2>Driver Online – Struk Perjalanan</h2>
+    <div id="r-meta" style="font-size:13px;color:#555"></div>
+    <table>
+      <tr><td>Dari</td><td id="r-from"></td></tr>
+      <tr><td>Ke</td><td id="r-to"></td></tr>
+      <tr><td>Jarak</td><td id="r-jarak"></td></tr>
+      <tr><td>Durasi</td><td id="r-durasi"></td></tr>
+      <tr><td>Ongkos (Rp10.000/km)</td><td id="r-ongkos"></td></tr>
+      <tr><td>Admin</td><td id="r-admin">Rp1.000</td></tr>
+      <tr class="total"><td>Total</td><td id="r-total"></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- JS kita -->
+<script src="app.js" defer></script>
+</body>
+</html>

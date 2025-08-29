@@ -1,0 +1,108 @@
+:root{
+  --blueA:#1e63ff; --blueB:#2f80ed; --blueC:#5aa7ff;
+  --bg:#0f162f; --card:#ffffff; --ink:#0b1224; --muted:#6b7280;
+  --accent:#1e63ff; --success:#22c55e; --shadow:0 14px 28px rgba(0,0,0,.16);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial;background:#eef3fb;color:var(--ink)}
+.app{height:100svh;max-width:480px;margin:0 auto;background:#f7fafe;position:relative;overflow:hidden}
+
+.screen{position:absolute;inset:0;display:none;overflow:auto}
+.screen.active{display:block}
+
+/* ===== Screen 1: Welcome ===== */
+.welcome{
+  min-height:100%;
+  display:grid; place-items:center;
+  background:radial-gradient(1000px 500px at -15% -15%, #8ec5ff 0%, transparent 60%),
+             linear-gradient(170deg, var(--blueA), var(--blueB));
+  color:#fff; padding:20px;
+}
+.welcome-card{width:100%; max-width:320px; text-align:center}
+.brand{
+  width:120px;height:120px;margin:0 auto 16px;border-radius:24px;
+  background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--shadow)
+}
+.brand svg{width:64px;height:64px;fill:#fff}
+.welcome h1{margin:8px 0 6px 0;font-size:28px;font-weight:800}
+.welcome p{margin:0 0 18px 0;opacity:.95}
+.btn{background:#fff;color:var(--accent);border:0;border-radius:999px;padding:12px 18px;font-weight:800;box-shadow:0 12px 24px rgba(0,0,0,.15);cursor:pointer}
+.btn:active{transform:translateY(1px)}
+.subtle{opacity:.9;font-size:12px;margin-top:10px}
+
+/* ===== Screen 2: Select ===== */
+.select{background:#f7fafe}
+.hero{
+  background:linear-gradient(180deg, var(--blueA), var(--blueB));
+  color:#fff; padding:18px 16px 88px; border-bottom-left-radius:24px; border-bottom-right-radius:24px;
+}
+.hero h2{margin:6px 0 4px 0;font-size:22px}
+.hero .bar{display:flex;justify-content:space-between;align-items:center;opacity:.95}
+.card{background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:14px; margin:-48px 16px 10px; position:relative; z-index:2}
+.input{width:100%; border:1px solid #e6e8ee; border-radius:12px; padding:12px; margin-bottom:10px; font-size:14px}
+.grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; padding:10px 16px 0; margin-top:4px}
+.mode{background:#fff;border:1px solid #e6e8ee;border-radius:16px;padding:14px 10px;text-align:center;cursor:pointer;box-shadow:var(--shadow)}
+.mode .icon{font-size:26px;margin-bottom:8px}
+.mode.active{outline:3px solid var(--blueA)}
+.mode.disabled{opacity:.5}
+.footer{position:sticky; bottom:0; display:flex; gap:10px; padding:12px 16px 16px; background:linear-gradient(180deg, rgba(247,250,254,0), #f7fafe 65%)}
+.btn-primary{background:linear-gradient(180deg, var(--blueC), var(--blueA)); color:#fff; border:0;border-radius:12px; padding:12px 16px; font-weight:800; cursor:pointer}
+.btn-secondary{background:#eef2ff; color:#1e63ff; border:0;border-radius:12px; padding:12px 16px; font-weight:800; cursor:pointer}
+
+/* ===== Screen 3: Ride ===== */
+.ride-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
+.ride-title{font-weight:800}
+.pill{background:#eef3ff;border:1px solid #e6e8ee;border-radius:999px;padding:8px 12px;font-size:12px}
+#ride-map{height:60svh;margin:0 16px;border-radius:16px;overflow:hidden;box-shadow:var(--shadow);background:#ddd}
+
+.ride-card{margin:12px 16px 18px;background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:12px}
+.row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.row .input{margin:0}
+.btn-blue{background:linear-gradient(180deg, var(--blueC), var(--blueA)); color:#fff; border:0; border-radius:12px; padding:11px 14px; font-weight:800; cursor:pointer}
+.btn-gray{background:#eef2ff; color:#1e63ff; border:0; border-radius:12px; padding:11px 14px; font-weight:800; cursor:pointer}
+.meta{font-size:13px;color:#6b7280}
+
+/* Alternatif rute */
+.route-list{display:grid;gap:8px;margin-top:6px}
+.route-item{display:flex;align-items:center;justify-content:space-between;background:#f6f8ff;border:1px solid #e6e8ee;border-radius:12px;padding:10px 12px;cursor:pointer}
+.route-item .left{display:flex;align-items:center;gap:8px}
+.route-item .dot{width:10px;height:10px;border-radius:999px;background:#8bb6ff}
+.route-item.active{outline:2px solid var(--blueA);background:#eef4ff}
+.route-item.active .dot{background:#1e63ff}
+.badge{font-size:11px;background:#eaf1ff;color:#1e63ff;padding:2px 8px;border-radius:999px;margin-left:8px}
+
+/* Suggestion box */
+.suggest{position:relative;margin-top:-6px}
+.suggest .panel{position:absolute;left:0;right:90px;z-index:500;background:#fff;border:1px solid #e6e8ee;border-radius:12px;box-shadow:var(--shadow);max-height:220px;overflow:auto}
+.suggest .item{padding:10px 12px;cursor:pointer}
+.suggest .item:hover{background:#f6f8ff}
+.suggest small{display:block;color:#6b7280}
+
+/* Kecepatan */
+.speed-banner{position:sticky; top:0; margin:8px 16px 0; z-index:20; display:none; align-items:center; justify-content:center; gap:8px; background:#111827; color:#e5e7eb; padding:8px 12px; border-radius:12px; box-shadow:var(--shadow); font-size:13px}
+.speed-ok{background:#0b7a28!important}
+.speed-warn{background:#7a0b0b!important}
+
+/* Modals / Toast */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;justify-content:center;z-index:1000}
+.modal{width:100%;max-width:520px;background:#fff;color:#0b1224;border-radius:18px 18px 0 0;padding:16px;box-shadow:var(--shadow);animation:slideUp .25s ease-out}
+.modal h3{margin:0 0 8px 0}
+@keyframes slideUp{from{transform:translateY(12px);opacity:.6}to{transform:none;opacity:1}}
+.grid{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:14px}
+.hr{border-top:1px dashed #e6e8ee;margin:8px 0}
+.total{font-weight:800}
+.modal-actions{display:flex;gap:8px;margin-top:12px}
+.toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);background:#111827;color:#e5e7eb;padding:10px 14px;border-radius:10px;box-shadow:var(--shadow);font-size:13px;display:none;z-index:1100}
+
+/* Receipt */
+#receipt{display:none;background:#fff;color:#111;padding:18px;width:800px;max-width:100%;font-family:Inter,Arial}
+#receipt table{width:100%;border-collapse:collapse;margin-top:8px}
+#receipt td{padding:6px 4px;border-bottom:1px solid #eee}
+#receipt .total{font-weight:800}
+.motor{width:28px;height:28px;transform:rotate(0deg)}
+.ph{width:64px;height:64px;border-radius:50%;background:#e5e7eb}
+
+/* Spinner untuk modal finding */
+.spinner{width:22px;height:22px;border:3px solid #e5e7eb;border-top-color:#1e63ff;border-radius:999px;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
